@@ -1,0 +1,14 @@
+{
+  "name": "gems-inkoop",
+  "private": true,
+  "workspaces": ["frontend","backend"],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace frontend dev\" \"yarn workspace backend dev\"",
+    "start": "node backend/server.js",
+    "build": "yarn workspace frontend build",
+    "test-server": "node tests/test_server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}

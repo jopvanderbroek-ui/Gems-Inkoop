@@ -27,10 +27,11 @@ export default function GemsInkoop(){
   function subtotal(){ return cart.reduce((s,i)=>s + i.priceEUR * i.qty,0).toFixed(2) }
   function totalWeight(){ return cart.reduce((s,i)=>s + (i.weightKg||0) * i.qty,0) }
 
-  async function getShippingEstimate(){ setLoading(true); setMessage(''); try{ const res = await fetch('/api/estimate',{ method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ from:{country:fromCountry}, to:{country:toCountry}, parcels:cart.map(i=>({weightKg:i.weightKg,hs:i.hsCode,qty:i.qty})), declaredValue:parseFloat(subtotal()) }) }); const data = await res.json(); setEstimate(data); setMessage('Schatting ontvangen') }catch(e){ setMessage('Kon schatting niet ophalen: '+e.message) } setLoading(false) }
+  const API_BASE = import.meta.env.VITE_API_BASE || ''
 
-  async function placeOrder(){ if(cart.length===0) return setMessage('Winkelwagen is leeg'); setLoading(true); setMessage('Bestelling plaatsen...'); try{ const res = await fetch('/api/create-order',{ method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ customer, cart, estimate }) }); const data = await res.json(); setOrder(data); setCart([]); setEstimate(null); setMessage('Bestelling geplaatst met nummer: '+data.orderId) }catch(e){ setMessage('Plaatsen mislukt: '+e.message) } setLoading(false) }
-
+  async function getShippingEstimate(){ setLoading(true); setMessage(''); try{ const res = await fetch(`${API_BASE}/api/estimate`,{ method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ from:{country:fromCountry}, to:{country:toCountry}, parcels:cart.map(i=>({weightKg:i.weightKg,hs:i.hsCode,qty:i.qty})), declaredValue:parseFloat(subtotal()) }) }); const data = await res.json(); setEstimate(data); setMessage('Schatting ontvangen') }catch(e){ setMessage('Kon schatting niet ophalen: '+e.message) } setLoading(false) }
+ 
+  async function placeOrder(){ if(cart.length===0) return setMessage('Winkelwagen is leeg'); setLoading(true); setMessage('Bestelling plaatsen...'); try{ const res = await fetch(`${API_BASE}/api/create-order`,{ method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ customer, cart, estimate }) }); const data = await res.json(); setOrder(data); setCart([]); setEstimate(null); setMessage('Bestelling geplaatst met nummer: '+data.orderId) }catch(e){ setMessage('Plaatsen mislukt: '+e.message) } setLoading(false) }
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">

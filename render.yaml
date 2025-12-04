@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: gems-backend
+    env: node
+    plan: free
+    buildCommand: "cd backend && npm install"
+    startCommand: "node backend/server.js"
+  - type: static
+    name: gems-inkoop
+    plan: free
+    buildCommand: "cd frontend && yarn install && yarn build"
+    staticPublishPath: "frontend/dist"
